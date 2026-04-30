@@ -1,5 +1,24 @@
 
 @import "tailwindcss";
+
+@theme {
+  /* ประกาศชื่อฟอนต์ลงในระบบของ Tailwind v4 */
+  --font-itim: "Itim", cursive;
+}
+
+.font-sans {
+  font-family: "Itim", cursive !important;
+}
+
+
+
+/* บังคับให้ทั้งเว็บใช้ฟอนต์นี้ */
+@layer base {
+  html, body {
+    font-family: "Itim", cursive !important;
+  }
+}
+
 #app {
   font-weight: normal;
   width: 100%;
