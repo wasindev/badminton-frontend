@@ -92,7 +92,7 @@ onMounted(loadPlayers);
   <div class="max-w-6xl mx-auto p-6 md:p-10 font-sans">
 
     <div class="mb-10 text-center md:text-left">
-      <h1 class="text-3xl font-black text-slate-900 tracking-tight uppercase">Buajai Player Management</h1>
+      <h1 class="text-3xl font-black text-slate-900 tracking-tight uppercase">Buajai Player Management ei ei</h1>
       <p class="text-slate-500 font-bold">เพิ่ม แก้ไข และลบรายชื่อนักกีฬา</p>
     </div>
 
