@@ -1,5 +1,10 @@
 <template>
-  <nav class="sticky top-0 z-50 px-3 py-3 md:px-6 md:py-4">
+  <nav
+    :class="[
+      'fixed top-0 left-0 right-0 z-50 px-3 py-3 md:px-6 md:py-4 transition-transform duration-500 ease-in-out',
+      isVisible ? 'translate-y-0' : '-translate-y-full'
+    ]"
+  >
     <div class="max-w-7xl mx-auto bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.05)] rounded-[1.5rem] md:rounded-[2.5rem] px-4 md:px-8">
       <div class="flex justify-between items-center h-16 md:h-20">
 
@@ -14,24 +19,16 @@
         </div>
 
         <div class="flex items-center gap-1.5 bg-slate-100/60 p-1.5 rounded-full">
-  <router-link
-    to="/"
-    class="nav-item group"
-    active-class="active"
-  >
-    <span class="text-xl md:text-lg transition-transform group-active:scale-90">📊</span>
-    <span class="text-[10px] md:text-sm font-black uppercase tracking-wider hidden md:inline ml-1">Dashboard</span>
-  </router-link>
+          <router-link to="/" class="nav-item group" active-class="active">
+            <span class="text-xl md:text-lg">📊</span>
+            <span class="text-[10px] md:text-sm font-black uppercase tracking-wider hidden md:inline ml-1">Dashboard</span>
+          </router-link>
 
-  <router-link
-    to="/manage-players"
-    class="nav-item group"
-    active-class="active"
-  >
-    <span class="text-xl md:text-lg transition-transform group-active:scale-90">👥</span>
-    <span class="text-[10px] md:text-sm font-black uppercase tracking-wider hidden md:inline ml-1">Players</span>
-  </router-link>
-</div>
+          <router-link to="/manage-players" class="nav-item group" active-class="active">
+            <span class="text-xl md:text-lg">👥</span>
+            <span class="text-[10px] md:text-sm font-black uppercase tracking-wider hidden md:inline ml-1">Players</span>
+          </router-link>
+        </div>
 
         <div class="hidden md:flex items-center gap-4 border-l border-slate-200 pl-6">
           <div class="flex flex-col items-end">
@@ -46,25 +43,57 @@
       </div>
     </div>
   </nav>
+
+  <div class="h-24 md:h-28"></div>
 </template>
 
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const isVisible = ref(true)
+const lastScrollPosition = ref(0)
+
+const handleScroll = () => {
+  const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop
+
+  // ป้องกันกรณี scroll ติดลบใน iOS
+  if (currentScrollPosition < 0) return
+
+  // ถ้าไถขึ้น (ตำแหน่งปัจจุบันน้อยกว่าตำแหน่งก่อนหน้า) ให้โชว์
+  // ถ้าไถลง (ตำแหน่งปัจจุบันมากกว่าตำแหน่งก่อนหน้า) ให้ซ่อน
+  if (currentScrollPosition < lastScrollPosition.value) {
+    isVisible.value = true
+  } else if (currentScrollPosition > 100) { // ซ่อนเมื่อเลื่อนลงมาเกิน 100px เท่านั้น
+    isVisible.value = false
+  }
+
+  lastScrollPosition.value = currentScrollPosition
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
+</script>
+
 <style scoped>
-/* สไตล์เมนูหลัก - ปรับขนาดให้เล็กลงใน Mobile */
+@reference "tailwindcss";
+
 .nav-item {
   @apply flex items-center justify-center gap-1 px-4 py-2.5 md:px-6 md:py-3 rounded-full text-slate-500 transition-all duration-300 ease-out;
 }
 
-/* เอฟเฟกต์เมื่อ Hover */
 .nav-item:hover {
   @apply text-slate-900 bg-white/50;
 }
 
-/* สไตล์เมนูเมื่อถูกเลือก (Active) */
 .active {
   @apply bg-white text-blue-600 shadow-sm ring-1 ring-slate-200/50;
 }
 
-/* ป้องกันตัวหนังสือล้นในมือถือเล็กมากๆ */
 @media (max-width: 380px) {
   .xs\:block {
     display: none;

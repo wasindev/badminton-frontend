@@ -129,7 +129,7 @@ onMounted(loadPlayers);
         </div>
       </section>
 
-      <div class="grid grid-cols-2 gap-3 mb-8">
+      <div class="grid grid-cols-2 gap-3 m-8">
         <div :class="players.length >= 12 ? 'bg-green-50 border-green-100' : 'bg-amber-50 border-amber-100'"
              class="p-3 rounded-2xl border flex flex-col items-center justify-center text-center">
           <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter mb-1">Total Players</span>
