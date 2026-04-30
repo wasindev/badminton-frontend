@@ -89,99 +89,117 @@ onMounted(loadPlayers);
 </script>
 
 <template>
-  <div class="max-w-6xl mx-auto p-6 md:p-10 font-sans">
+  <div class="min-h-screen bg-[#F8FAFC] pb-20 font-sans antialiased text-slate-800">
+    <div class="max-w-4xl mx-auto px-4 pt-8 pb-6">
+      <div class="text-center md:text-left mb-6">
+        <h1 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight uppercase italic">
+          Player <span class="text-blue-600">Management</span>
+        </h1>
+        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em]">จัดการรายชื่อนักกีฬา</p>
+      </div>
 
-    <div class="mb-10 text-center md:text-left">
-      <h1 class="text-3xl font-black text-slate-900 tracking-tight uppercase">Buajai Player Management ei ei</h1>
-      <p class="text-slate-500 font-bold">เพิ่ม แก้ไข และลบรายชื่อนักกีฬา</p>
-    </div>
-
-    <section class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 mb-8">
-      <div class="flex flex-col md:flex-row gap-4">
-        <input
-          v-model="newPlayerName"
-          @keyup.enter="addPlayer"
-          type="text"
-          placeholder="ชื่อนักกีฬา..."
-          class="flex-1 bg-slate-50 border-none rounded-2xl px-6 py-4 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all"
-        >
-        <div class="flex items-center gap-4 bg-slate-50 px-6 rounded-2xl">
-          <span class="text-xs font-black text-slate-400 uppercase tracking-widest">มือคุม?</span>
-          <button
-            @click="newPlayerIsController = !newPlayerIsController"
-            :class="newPlayerIsController ? 'bg-blue-600' : 'bg-slate-300'"
-            class="w-14 h-8 rounded-full relative transition-all"
+      <section class="bg-white p-5 md:p-6 rounded-[2rem] shadow-sm border border-slate-100 mb-6">
+        <div class="flex flex-col gap-3">
+          <input
+            v-model="newPlayerName"
+            @keyup.enter="addPlayer"
+            type="text"
+            placeholder="พิมพ์ชื่อนักกีฬาที่นี่..."
+            class="w-full bg-slate-50 border-none rounded-xl px-5 py-3.5 font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 transition-all text-sm"
           >
-            <div :class="newPlayerIsController ? 'translate-x-7' : 'translate-x-1'" class="absolute top-1 w-6 h-6 bg-white rounded-full transition-all shadow-md"></div>
-          </button>
-        </div>
-        <button
-          @click="addPlayer"
-          :disabled="loading"
-          class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black hover:bg-black transition-all disabled:opacity-50"
-        >
-          {{ loading ? '...' : 'ADD' }}
-        </button>
-      </div>
-    </section>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-      <div :class="players.length >= 12 ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'"
-           class="p-4 rounded-2xl border-2 border-dashed flex items-center justify-between">
-        <span class="font-bold text-slate-700">Total Players (12+)</span>
-        <span class="text-lg font-black" :class="players.length >= 12 ? 'text-green-600' : 'text-amber-600'">{{ players.length }}</span>
-      </div>
-      <div :class="controllers.length === normals.length && players.length > 0 ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'"
-           class="p-4 rounded-2xl border-2 border-dashed flex items-center justify-between">
-        <span class="font-bold text-slate-700">Balance (คุม/ทั่วไป)</span>
-        <span class="text-lg font-black" :class="controllers.length === normals.length ? 'text-green-600' : 'text-amber-600'">
-          {{ controllers.length }} : {{ normals.length }}
-        </span>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-      <div class="bg-white rounded-[2.5rem] shadow-sm overflow-hidden border border-slate-100">
-        <div class="bg-blue-600 p-6 text-white font-black tracking-widest uppercase">🏸 มือคุม ({{ controllers.length }})</div>
-        <div class="p-4 space-y-2">
-          <div v-for="p in controllers" :key="p.id" class="flex justify-between items-center p-4 hover:bg-slate-50 rounded-2xl group transition-all">
-            <div v-if="editingId === p.id" class="flex gap-2 w-full">
-              <input v-model="editingName" class="flex-1 border-2 border-blue-500 rounded-xl px-3 py-1 font-bold" />
-              <button @click="updatePlayer(p)" class="bg-blue-600 text-white px-4 py-1 rounded-xl text-sm font-bold">Save</button>
-              <button @click="editingId = null" class="bg-slate-200 text-slate-600 px-4 py-1 rounded-xl text-sm font-bold">X</button>
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-xl flex-1">
+              <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">มือคุม?</span>
+              <button
+                @click="newPlayerIsController = !newPlayerIsController"
+                :class="newPlayerIsController ? 'bg-blue-600' : 'bg-slate-300'"
+                class="w-10 h-6 rounded-full relative transition-all"
+              >
+                <div :class="newPlayerIsController ? 'translate-x-4' : 'translate-x-0.5'" class="absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all shadow-sm"></div>
+              </button>
             </div>
-            <template v-else>
-              <span class="font-bold text-slate-700 text-lg">{{ p.name }}</span>
-              <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                <button @click="startEdit(p)" class="text-blue-500 font-bold p-2 text-sm">EDIT</button>
-                <button @click="deletePlayer(p.id)" class="text-red-400 font-bold p-2 text-sm">DEL</button>
-              </div>
-            </template>
+            <button
+              @click="addPlayer"
+              :disabled="loading"
+              class="bg-slate-900 text-white px-8 py-3 rounded-xl font-black hover:bg-black transition-all disabled:opacity-50 text-sm tracking-widest uppercase"
+            >
+              {{ loading ? '...' : 'ADD' }}
+            </button>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="bg-white rounded-[2.5rem] shadow-sm overflow-hidden border border-slate-100">
-        <div class="bg-slate-800 p-6 text-white font-black tracking-widest uppercase">👤 ทั่วไป ({{ normals.length }})</div>
-        <div class="p-4 space-y-2">
-          <div v-for="p in normals" :key="p.id" class="flex justify-between items-center p-4 hover:bg-slate-50 rounded-2xl group transition-all">
-            <div v-if="editingId === p.id" class="flex gap-2 w-full">
-              <input v-model="editingName" class="flex-1 border-2 border-blue-500 rounded-xl px-3 py-1 font-bold" />
-              <button @click="updatePlayer(p)" class="bg-blue-600 text-white px-4 py-1 rounded-xl text-sm font-bold">Save</button>
-              <button @click="editingId = null" class="bg-slate-200 text-slate-600 px-4 py-1 rounded-xl text-sm font-bold">X</button>
-            </div>
-            <template v-else>
-              <span class="font-bold text-slate-700 text-lg">{{ p.name }}</span>
-              <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                <button @click="startEdit(p)" class="text-blue-500 font-bold p-2 text-sm">EDIT</button>
-                <button @click="deletePlayer(p.id)" class="text-red-400 font-bold p-2 text-sm">DEL</button>
-              </div>
-            </template>
-          </div>
+      <div class="grid grid-cols-2 gap-3 mb-8">
+        <div :class="players.length >= 12 ? 'bg-green-50 border-green-100' : 'bg-amber-50 border-amber-100'"
+             class="p-3 rounded-2xl border flex flex-col items-center justify-center text-center">
+          <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter mb-1">Total Players</span>
+          <span class="text-base font-black" :class="players.length >= 12 ? 'text-green-600' : 'text-amber-600'">{{ players.length }} / 12+</span>
+        </div>
+        <div :class="controllers.length === normals.length && players.length > 0 ? 'bg-indigo-50 border-indigo-100' : 'bg-amber-50 border-amber-100'"
+             class="p-3 rounded-2xl border flex flex-col items-center justify-center text-center">
+          <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter mb-1">Balance (ค/ท)</span>
+          <span class="text-base font-black" :class="controllers.length === normals.length ? 'text-indigo-600' : 'text-amber-600'">
+            {{ controllers.length }} : {{ normals.length }}
+          </span>
         </div>
       </div>
 
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden border border-slate-100">
+          <div class="bg-blue-600 px-6 py-3 text-white text-[11px] font-black tracking-[0.2em] uppercase flex justify-between items-center">
+            <span>🏸 มือคุม</span>
+            <span class="bg-white/20 px-2 py-0.5 rounded-lg">{{ controllers.length }}</span>
+          </div>
+          <div class="divide-y divide-slate-50">
+            <div v-for="p in controllers" :key="p.id" class="flex justify-between items-center p-4 hover:bg-slate-50 transition-all">
+              <div v-if="editingId === p.id" class="flex gap-2 w-full">
+                <input v-model="editingName" class="flex-1 border-2 border-blue-500 rounded-lg px-3 py-1 font-bold text-sm" />
+                <button @click="updatePlayer(p)" class="text-blue-600 font-bold text-xs uppercase">Save</button>
+              </div>
+              <template v-else>
+                <span class="font-bold text-slate-700 text-sm tracking-tight">{{ p.name }}</span>
+                <div class="flex gap-3">
+                  <button @click="startEdit(p)" class="text-blue-400 font-black text-[10px] uppercase tracking-tighter">Edit</button>
+                  <button @click="deletePlayer(p.id)" class="text-rose-300 font-black text-[10px] uppercase tracking-tighter">Del</button>
+                </div>
+              </template>
+            </div>
+            <div v-if="controllers.length === 0" class="p-8 text-center text-slate-300 text-xs italic">ไม่มีรายชื่อมือคุม</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-[2rem] shadow-sm overflow-hidden border border-slate-100">
+          <div class="bg-slate-800 px-6 py-3 text-white text-[11px] font-black tracking-[0.2em] uppercase flex justify-between items-center">
+            <span>👤 ทั่วไป</span>
+            <span class="bg-white/20 px-2 py-0.5 rounded-lg">{{ normals.length }}</span>
+          </div>
+          <div class="divide-y divide-slate-50">
+            <div v-for="p in normals" :key="p.id" class="flex justify-between items-center p-4 hover:bg-slate-50 transition-all">
+              <div v-if="editingId === p.id" class="flex gap-2 w-full">
+                <input v-model="editingName" class="flex-1 border-2 border-blue-500 rounded-lg px-3 py-1 font-bold text-sm" />
+                <button @click="updatePlayer(p)" class="text-blue-600 font-bold text-xs uppercase">Save</button>
+              </div>
+              <template v-else>
+                <span class="font-bold text-slate-700 text-sm tracking-tight">{{ p.name }}</span>
+                <div class="flex gap-3">
+                  <button @click="startEdit(p)" class="text-blue-400 font-black text-[10px] uppercase tracking-tighter">Edit</button>
+                  <button @click="deletePlayer(p.id)" class="text-rose-300 font-black text-[10px] uppercase tracking-tighter">Del</button>
+                </div>
+              </template>
+            </div>
+            <div v-if="normals.length === 0" class="p-8 text-center text-slate-300 text-xs italic">ไม่มีรายชื่อทั่วไป</div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
+:deep(body) { font-family: 'Outfit', sans-serif; }
+</style>
+
+
