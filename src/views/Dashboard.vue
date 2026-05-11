@@ -5,15 +5,11 @@ import Swal from 'sweetalert2';
 
 
 const getCountClass = (count) => {
-  // ใช้ parseInt เพื่อดึงเฉพาะตัวเลขตัวแรกออกมา (ป้องกันกรณี count ส่งมาเป็น "1/2")
-  const num = parseInt(count);
-
-  if (isNaN(num)) return 'bg-slate-100 text-slate-400'; // ถ้าไม่ใช่ตัวเลขให้เป็นสีเทา
-  if (num <= 1) return 'bg-green-100 text-green-700 border-green-200';
-  if (num === 2) return 'bg-orange-100 text-orange-700 border-orange-200';
-  return 'bg-red-100 text-red-700 border-red-200';
+  const num = Number(count);
+  if (num === 1) return 'bg-green-100 text-green-700 border-green-200'; // 1 รอบ = เขียว
+  if (num >= 2) return 'bg-orange-100 text-orange-700 border-orange-200'; // 2 รอบ = ส้ม
+  return 'bg-slate-50 text-slate-400'; // ยังไม่เล่น = เทา
 };
-
 
 // ฟังก์ชันล้างประวัติทั้งหมด
 const clearAllHistory = async () => {
@@ -192,10 +188,14 @@ const archiveSession = async () => {
 const simulateMatches = async () => {
   loading.value = true;
   try {
+    // คำนวณจำนวนสนาม: ถ้า 16 คนขึ้นไปใช้ 3 สนาม, ต่ำกว่านั้นใช้ 2 สนาม
+    const courtsToUse = players.value.length >= 16 ? 3 : 2;
+
     const res = await api.post("/session/simulate", {
       players: players.value,
-      court_count: 2
+      court_count: courtsToUse // ส่งค่าที่คำนวณได้ไป
     });
+
     if (res.data?.success) {
       matches.value = res.data.data;
     }
@@ -274,8 +274,8 @@ onMounted(async () => {
       </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 md:px-6 pt-6 md:pt-10">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+<main class="max-w-7xl mx-auto px-4 md:px-6 pt-6 md:pt-10">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <div v-for="(m, i) in matches" :key="i"
           class="group bg-white rounded-[1.5rem] md:rounded-[2.5rem] shadow-sm border border-slate-200/60 transition-all duration-300 overflow-hidden hover:translate-y-[-2px] hover:border-blue-400/50">
 
@@ -291,11 +291,13 @@ onMounted(async () => {
             <div v-if="!m.is_empty" class="grid grid-cols-[1fr_auto_1fr] items-center gap-1 md:gap-3">
               <div class="space-y-4">
                 <div v-for="p in m.team_a" :key="p.name" class="pl-3 border-l-4 border-blue-500">
-                  <div class="flex flex-wrap items-center gap-1.5">
-                    <span class="text-sm md:text-lg font-black text-slate-800">{{ p.name }}</span>
-<span :class="['text-[10px] font-black px-2 py-0.5 rounded-md border', getCountClass(p.count)]">
-  {{ p.count }} รอบ
-</span>               </div>
+                 <div class="flex flex-wrap items-center gap-1.5">
+  <span class="text-sm md:text-lg font-black text-slate-800">{{ p.name }}</span>
+
+  <span :class="['text-[10px] font-black px-2 py-0.5 rounded-md border transition-all', getCountClass(p.count)]">
+    {{ p.count }}/2 รอบ
+  </span>
+</div>
                 </div>
               </div>
 
@@ -307,7 +309,7 @@ onMounted(async () => {
                 <div v-for="p in m.team_b" :key="p.name" class="pr-3 border-r-4 border-indigo-500">
                   <div class="flex flex-wrap items-center justify-end gap-1.5">
 <span :class="['text-[10px] font-black px-2 py-0.5 rounded-md border', getCountClass(p.count)]">
-  {{ p.count }} รอบ
+  {{ p.count }} / 2รอบ
 </span>
                     <span class="text-sm md:text-lg font-black text-slate-800">{{ p.name }}</span>
                   </div>
